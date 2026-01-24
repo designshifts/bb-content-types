@@ -1,10 +1,17 @@
 <?php
 /**
  * Plugin Name: BB Content Types
+ * Plugin URI: https://betterbuilds.app
  * Description: Manage custom post types, taxonomies, and rewrite rules via admin UI.
  * Version: 0.1.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
+ * Author: Chris Anderson
+ * Author URI: https://www.linkedin.com/in/chrisandersondesigns/
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: bb-content-types
+ * Domain Path: /languages
  *
  * @package BB_Content_Types
  */
