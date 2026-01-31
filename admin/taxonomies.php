@@ -30,9 +30,8 @@ function bb_ct_render_taxonomies_page(): void {
 	$editing = $editing_slug && isset( $taxonomies[ $editing_slug ] ) ? $taxonomies[ $editing_slug ] : null;
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Content Types', 'bb-content-types' ); ?></h1>
+		<?php bb_ct_render_page_header( __( 'Taxonomies', 'bb-content-types' ), 'tag', __( 'Content Types', 'bb-content-types' ) ); ?>
 		<p><?php esc_html_e( 'Taxonomies classify content across one or more content types (Department, Location, Topic). Create once, then attach where needed.', 'bb-content-types' ); ?></p>
-		<h2><?php esc_html_e( 'Taxonomies', 'bb-content-types' ); ?></h2>
 
 		<table class="widefat striped">
 			<thead>

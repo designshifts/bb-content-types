@@ -24,8 +24,7 @@ function bb_ct_render_import_export_page(): void {
 	}
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Content Types', 'bb-content-types' ); ?></h1>
-		<h2><?php esc_html_e( 'Import / Export', 'bb-content-types' ); ?></h2>
+		<?php bb_ct_render_page_header( __( 'Import / Export', 'bb-content-types' ), 'upload', __( 'Content Types', 'bb-content-types' ) ); ?>
 
 		<h3><?php esc_html_e( 'Export configuration', 'bb-content-types' ); ?></h3>
 		<p><?php esc_html_e( 'Download a JSON file containing your post types and taxonomies. Useful for backups and moving between environments.', 'bb-content-types' ); ?></p>

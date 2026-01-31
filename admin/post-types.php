@@ -31,7 +31,7 @@ function bb_ct_render_post_types_page(): void {
 	$editing = $editing_slug && isset( $post_types[ $editing_slug ] ) ? $post_types[ $editing_slug ] : null;
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Content Types', 'bb-content-types' ); ?></h1>
+		<?php bb_ct_render_page_header( __( 'Post Types', 'bb-content-types' ), 'database', __( 'Content Types', 'bb-content-types' ) ); ?>
 		<p><?php esc_html_e( 'Define custom post types, taxonomies, and URL behavior with predictable settings that can be safely handed off.', 'bb-content-types' ); ?></p>
 		<p>
 			<?php
