@@ -39,6 +39,9 @@ function bb_ct_register_from_config(): void {
 		}
 		$supports = ! empty( $pt['supports'] ) ? $pt['supports'] : array( 'title', 'editor' );
 		$rewrite_base = $pt['rewrite_base'] ?? $slug;
+		if ( '' === $rewrite_base ) {
+			$rewrite_base = $slug;
+		}
 		$has_archive  = ! empty( $pt['has_archive'] );
 		$archive_slug = ! empty( $pt['archive_slug'] ) ? $pt['archive_slug'] : $rewrite_base;
 
@@ -49,6 +52,7 @@ function bb_ct_register_from_config(): void {
 			),
 			'description'         => $pt['description'] ?? '',
 			'public'              => ! empty( $pt['public'] ),
+			'publicly_queryable'  => ! empty( $pt['public'] ),
 			'has_archive'         => $has_archive ? $archive_slug : false,
 			'hierarchical'        => ! empty( $pt['hierarchical'] ),
 			'show_in_rest'        => ! empty( $pt['show_in_rest'] ),

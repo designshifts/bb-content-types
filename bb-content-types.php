@@ -37,8 +37,18 @@ require_once BB_CT_PLUGIN_DIR . 'admin/post-types.php';
 require_once BB_CT_PLUGIN_DIR . 'admin/taxonomies.php';
 require_once BB_CT_PLUGIN_DIR . 'admin/import-export.php';
 
+add_action( 'init', 'bb_ct_load_textdomain' );
 register_activation_hook( __FILE__, 'bb_ct_activate' );
 register_deactivation_hook( __FILE__, 'bb_ct_deactivate' );
+
+/**
+ * Load plugin textdomain.
+ *
+ * @return void
+ */
+function bb_ct_load_textdomain(): void {
+	load_plugin_textdomain( 'bb-content-types', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
 
 /**
  * Activation hook.

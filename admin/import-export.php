@@ -53,11 +53,12 @@ function bb_ct_render_import_export_page(): void {
 			<h3><?php esc_html_e( 'Import preview', 'bb-content-types' ); ?></h3>
 			<p>
 				<?php
-				printf(
-					esc_html__( 'Will create or update %1$d post types and %2$d taxonomies.', 'bb-content-types' ),
-					(int) $preview['counts']['post_types'],
-					(int) $preview['counts']['taxonomies']
-				);
+			// translators: 1: post type count, 2: taxonomy count.
+			printf(
+				esc_html__( 'Will create or update %1$d post types and %2$d taxonomies.', 'bb-content-types' ),
+				(int) $preview['counts']['post_types'],
+				(int) $preview['counts']['taxonomies']
+			);
 				?>
 			</p>
 			<?php if ( ! empty( $preview['warnings'] ) ) : ?>
@@ -112,7 +113,7 @@ function bb_ct_handle_import_preview(): void {
 	}
 	check_admin_referer( 'bb_ct_import_preview' );
 
-	$json = isset( $_POST['import_json'] ) ? wp_unslash( $_POST['import_json'] ) : '';
+	$json = isset( $_POST['import_json'] ) ? sanitize_textarea_field( wp_unslash( $_POST['import_json'] ) ) : '';
 	$preview = bb_ct_build_import_preview( $json );
 	if ( ! $preview ) {
 		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-import-export&bb_ct_message=Invalid%20JSON' ) );
@@ -153,6 +154,76 @@ function bb_ct_handle_import_apply(): void {
 }
 
 /**
+ * Sanitize imported config payload.
+ *
+ * @param array $data Raw import data.
+ * @return array
+ */
+function bb_ct_sanitize_import_data( array $data ): array {
+	$sanitized = array(
+		'post_types' => array(),
+		'taxonomies' => array(),
+		'warnings'   => array(),
+	);
+	$allowed_supports = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields', 'page-attributes' );
+
+	foreach ( $data['post_types'] ?? array() as $slug => $pt ) {
+		$raw_slug = (string) $slug;
+		$slug = sanitize_key( $slug );
+		if ( '' === $slug || ! bb_ct_is_valid_slug( $slug ) ) {
+			$sanitized['warnings'][] = sprintf( 'Skipped invalid post type slug: %s', $raw_slug );
+			continue;
+		}
+		$supports = array_map( 'sanitize_text_field', (array) ( $pt['supports'] ?? array() ) );
+		$supports = array_values( array_intersect( $allowed_supports, $supports ) );
+		if ( empty( $supports ) ) {
+			$supports = array( 'title', 'editor' );
+		}
+		$sanitized['post_types'][ $slug ] = array(
+			'plural'              => sanitize_text_field( $pt['plural'] ?? $slug ),
+			'singular'            => sanitize_text_field( $pt['singular'] ?? $slug ),
+			'description'         => sanitize_text_field( $pt['description'] ?? '' ),
+			'icon'                => sanitize_text_field( $pt['icon'] ?? 'dashicons-admin-post' ),
+			'supports'            => $supports,
+			'public'              => ! empty( $pt['public'] ),
+			'has_archive'         => ! empty( $pt['has_archive'] ),
+			'hierarchical'        => ! empty( $pt['hierarchical'] ),
+			'show_in_rest'        => ! empty( $pt['show_in_rest'] ),
+			'show_in_menu'        => ! empty( $pt['show_in_menu'] ),
+			'exclude_from_search' => ! empty( $pt['exclude_from_search'] ),
+			'rewrite_base'         => sanitize_key( $pt['rewrite_base'] ?? '' ),
+			'with_front'           => ! empty( $pt['with_front'] ),
+			'archive_slug'         => sanitize_key( $pt['archive_slug'] ?? '' ),
+			'parent_page_id'       => absint( $pt['parent_page_id'] ?? 0 ),
+			'enabled'              => array_key_exists( 'enabled', (array) $pt ) ? ! empty( $pt['enabled'] ) : true,
+			'conflicts'            => array(),
+		);
+	}
+
+	foreach ( $data['taxonomies'] ?? array() as $slug => $tax ) {
+		$raw_slug = (string) $slug;
+		$slug = sanitize_key( $slug );
+		if ( '' === $slug || ! bb_ct_is_valid_slug( $slug ) ) {
+			$sanitized['warnings'][] = sprintf( 'Skipped invalid taxonomy slug: %s', $raw_slug );
+			continue;
+		}
+		$post_types = array_map( 'sanitize_key', (array) ( $tax['post_types'] ?? array() ) );
+		$post_types = array_values( array_filter( $post_types ) );
+		$sanitized['taxonomies'][ $slug ] = array(
+			'plural'            => sanitize_text_field( $tax['plural'] ?? $slug ),
+			'singular'          => sanitize_text_field( $tax['singular'] ?? $slug ),
+			'hierarchical'      => ! empty( $tax['hierarchical'] ),
+			'show_in_rest'      => ! empty( $tax['show_in_rest'] ),
+			'show_admin_column' => ! empty( $tax['show_admin_column'] ),
+			'post_types'        => $post_types,
+			'conflicts'         => array(),
+		);
+	}
+
+	return $sanitized;
+}
+
+/**
  * Build import preview data.
  *
  * @param string $json JSON payload.
@@ -163,9 +234,11 @@ function bb_ct_build_import_preview( string $json ): ?array {
 	if ( ! is_array( $data ) || ! isset( $data['post_types'], $data['taxonomies'] ) ) {
 		return null;
 	}
-	$post_types = is_array( $data['post_types'] ) ? $data['post_types'] : array();
-	$taxonomies = is_array( $data['taxonomies'] ) ? $data['taxonomies'] : array();
-	$warnings = array();
+
+	$sanitized = bb_ct_sanitize_import_data( $data );
+	$post_types = $sanitized['post_types'];
+	$taxonomies = $sanitized['taxonomies'];
+	$warnings = $sanitized['warnings'];
 	$config = bb_ct_get_config();
 
 	foreach ( array_keys( $post_types ) as $slug ) {

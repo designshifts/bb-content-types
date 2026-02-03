@@ -39,8 +39,52 @@ function bb_ct_enqueue_admin_styles( string $hook ): void {
 		.bb-ct-header-left{flex:1;min-width:0;}
 		.bb-ct-header h1{display:flex;align-items:center;gap:8px;margin:0;font-size:23px;font-weight:400;line-height:1.3;}
 		.bb-ct-header-subtitle{margin:6px 0 0;color:#6b7280;font-size:13px;}
+		.bb-ct-page-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;}
+		.bb-ct-intro-text{margin:0;color:#606b76;max-width:720px;}
+		.bb-ct-card{background:#fff;border:1px solid #dcdcde;border-radius:10px;margin:16px 0;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+		.bb-ct-card-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid #eef1f4;}
+		.bb-ct-card-header h2{margin:0;font-size:16px;}
+		.bb-ct-card-sub{margin:4px 0 0;color:#6b7280;font-size:12px;}
+		.bb-ct-table{border:0;margin:0;}
+		.bb-ct-table th, .bb-ct-table td{padding:12px 14px;vertical-align:middle;}
+		.bb-ct-pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+		.bb-ct-pill--active{background:#d1fae5;color:#065f46;}
+		.bb-ct-pill--inactive{background:#e5e7eb;color:#6b7280;}
+		.bb-ct-chip{display:inline-flex;align-items:center;background:#f3f4f6;color:#374151;border-radius:999px;padding:2px 8px;font-size:11px;margin-right:6px;}
+		.bb-ct-accordion{border:0;}
+		.bb-ct-accordion-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;}
+		.bb-ct-accordion-summary::-webkit-details-marker{display:none;}
+		.bb-ct-accordion-icon{width:22px;height:22px;border-radius:999px;background:#f3f4f6;position:relative;}
+		.bb-ct-accordion-icon:before{content:"+";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#111827;font-weight:700;}
+		.bb-ct-accordion[open] .bb-ct-accordion-icon:before{content:"–";}
+		.bb-ct-accordion-body{padding:0 18px 18px;border-top:1px solid #eef1f4;}
+		.bb-ct-form-section{padding:16px 0;border-bottom:1px solid #eef1f4;}
+		.bb-ct-form-section:last-of-type{border-bottom:0;}
+		.bb-ct-form-section h3{margin:0 0 12px;font-size:14px;}
+		.bb-ct-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+		.bb-ct-field label{display:block;font-weight:600;margin-bottom:6px;}
+		.bb-ct-field input[type="text"], .bb-ct-field select, .bb-ct-field textarea{width:100%;max-width:100%;}
+		.bb-ct-field textarea{min-height:90px;}
+		.bb-ct-field-inline{display:flex;flex-direction:column;justify-content:center;}
+		.bb-ct-checkbox-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px;}
+		.bb-ct-toggle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+		.bb-ct-toggle-card{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;background:#fafafa;}
+		.bb-ct-toggle-card label{font-weight:600;display:block;margin-bottom:6px;}
+		.bb-ct-warning{color:#b32d2e;}
+		.bb-ct-form-footer{display:flex;justify-content:flex-end;gap:10px;padding-top:16px;}
+		@media (max-width: 960px){
+			.bb-ct-page-intro{flex-direction:column;align-items:flex-start;}
+			.bb-ct-form-grid{grid-template-columns:1fr;}
+			.bb-ct-toggle-grid{grid-template-columns:1fr;}
+			.bb-ct-checkbox-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+		}
+		@media (max-width: 640px){
+			.bb-ct-checkbox-grid{grid-template-columns:1fr;}
+		}
 	';
-	wp_add_inline_style( 'wp-admin', $css );
+	wp_register_style( 'bb-content-types-admin', false, array(), BB_CT_VERSION );
+	wp_enqueue_style( 'bb-content-types-admin' );
+	wp_add_inline_style( 'bb-content-types-admin', $css );
 }
 
 /**

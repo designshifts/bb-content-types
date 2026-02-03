@@ -32,19 +32,35 @@ function bb_ct_render_post_types_page(): void {
 	?>
 	<div class="wrap">
 		<?php bb_ct_render_page_header( __( 'Post Types', 'bb-content-types' ), 'database', __( 'Content Types', 'bb-content-types' ) ); ?>
-		<p><?php esc_html_e( 'Define custom post types, taxonomies, and URL behavior with predictable settings that can be safely handed off.', 'bb-content-types' ); ?></p>
-		<p>
-			<?php
-			printf(
-				'<a class="button" href="%s">%s</a>',
-				esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bb_ct_flush_rewrites' ), 'bb_ct_flush_rewrites' ) ),
-				esc_html__( 'Flush rewrites', 'bb-content-types' )
-			);
-			?>
-		</p>
-		<h2><?php esc_html_e( 'Post Types', 'bb-content-types' ); ?></h2>
+		<div class="bb-ct-page-intro">
+			<p class="bb-ct-intro-text"><?php esc_html_e( 'Define custom post types, taxonomies, and URL behavior with predictable settings that can be safely handed off.', 'bb-content-types' ); ?></p>
+			<div class="bb-ct-intro-actions">
+				<?php
+				printf(
+					'<a class="button" href="%s">%s</a>',
+					esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bb_ct_flush_rewrites' ), 'bb_ct_flush_rewrites' ) ),
+					esc_html__( 'Flush rewrites', 'bb-content-types' )
+				);
+				?>
+			</div>
+		</div>
 
-		<table class="widefat striped">
+		<div class="bb-ct-card">
+			<div class="bb-ct-card-header">
+				<div>
+					<h2><?php esc_html_e( 'Registered Post Types', 'bb-content-types' ); ?></h2>
+					<?php
+					// translators: %d is the number of registered post types.
+					$registered_count = sprintf(
+						_n( '%d post type registered', '%d post types registered', count( $post_types ), 'bb-content-types' ),
+						count( $post_types )
+					);
+					?>
+					<p class="bb-ct-card-sub"><?php echo esc_html( $registered_count ); ?></p>
+				</div>
+				<a class="button button-primary" href="#bb-ct-post-type-form"><?php esc_html_e( 'Add New', 'bb-content-types' ); ?></a>
+			</div>
+			<table class="widefat striped bb-ct-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Name', 'bb-content-types' ); ?></th>
@@ -66,19 +82,23 @@ function bb_ct_render_post_types_page(): void {
 					<tr>
 						<td><?php echo esc_html( $pt['plural'] ); ?></td>
 						<td><?php echo esc_html( $slug ); ?></td>
-						<td><?php echo ! empty( $pt['enabled'] ) ? esc_html__( 'Enabled', 'bb-content-types' ) : esc_html__( 'Disabled', 'bb-content-types' ); ?></td>
-						<td><?php echo ! empty( $pt['has_archive'] ) ? esc_html__( 'Yes', 'bb-content-types' ) : esc_html__( 'No', 'bb-content-types' ); ?></td>
-						<td><?php echo ! empty( $pt['show_in_rest'] ) ? esc_html__( 'Yes', 'bb-content-types' ) : esc_html__( 'No', 'bb-content-types' ); ?></td>
+						<td>
+							<span class="bb-ct-pill <?php echo ! empty( $pt['enabled'] ) ? 'bb-ct-pill--active' : 'bb-ct-pill--inactive'; ?>">
+								<?php echo ! empty( $pt['enabled'] ) ? esc_html__( 'Active', 'bb-content-types' ) : esc_html__( 'Inactive', 'bb-content-types' ); ?>
+							</span>
+						</td>
+						<td><?php echo ! empty( $pt['has_archive'] ) ? esc_html__( 'Archive', 'bb-content-types' ) : esc_html__( '—', 'bb-content-types' ); ?></td>
+						<td><?php echo ! empty( $pt['show_in_rest'] ) ? esc_html__( 'REST', 'bb-content-types' ) : esc_html__( '—', 'bb-content-types' ); ?></td>
 						<td><?php echo esc_html( $pt['rewrite_base'] ?? $slug ); ?></td>
 						<td>
 							<?php
 							$attached = array();
 							foreach ( $taxonomies as $tax_slug => $tax ) {
 								if ( in_array( $slug, $tax['post_types'] ?? array(), true ) ) {
-									$attached[] = $tax_slug;
+									$attached[] = sprintf( '<span class="bb-ct-chip">%s</span>', esc_html( $tax_slug ) );
 								}
 							}
-							echo esc_html( implode( ', ', $attached ) );
+							echo $attached ? wp_kses_post( implode( ' ', $attached ) ) : esc_html__( '—', 'bb-content-types' );
 							?>
 						</td>
 						<td>
@@ -102,53 +122,49 @@ function bb_ct_render_post_types_page(): void {
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
-		</table>
+			</table>
+		</div>
 
-		<hr />
-
-		<h2><?php echo $editing ? esc_html__( 'Edit Post Type', 'bb-content-types' ) : esc_html__( 'Add New Post Type', 'bb-content-types' ); ?></h2>
+		<div class="bb-ct-card" id="bb-ct-post-type-form">
+			<details class="bb-ct-accordion" <?php echo $editing ? 'open' : ''; ?>>
+				<summary class="bb-ct-accordion-summary">
+					<div>
+						<h2><?php echo $editing ? esc_html__( 'Edit Post Type', 'bb-content-types' ) : esc_html__( 'Add New Post Type', 'bb-content-types' ); ?></h2>
+						<p class="bb-ct-card-sub"><?php esc_html_e( 'Create a new custom post type with full control over URLs and features.', 'bb-content-types' ); ?></p>
+					</div>
+					<span class="bb-ct-accordion-icon" aria-hidden="true"></span>
+				</summary>
+				<div class="bb-ct-accordion-body">
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'bb_ct_save_post_type' ); ?>
 			<input type="hidden" name="action" value="bb_ct_save_post_type" />
 			<?php if ( $editing_slug ) : ?>
 				<input type="hidden" name="original_slug" value="<?php echo esc_attr( $editing_slug ); ?>" />
 			<?php endif; ?>
-			<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Plural Name', 'bb-content-types' ); ?></th>
-					<td>
-						<input type="text" name="plural" class="regular-text" value="<?php echo esc_attr( $editing['plural'] ?? '' ); ?>" required>
+			<div class="bb-ct-form-section">
+				<h3><?php esc_html_e( 'Basic Information', 'bb-content-types' ); ?></h3>
+				<div class="bb-ct-form-grid">
+					<div class="bb-ct-field">
+						<label for="bb-ct-plural"><?php esc_html_e( 'Plural Name', 'bb-content-types' ); ?></label>
+						<input id="bb-ct-plural" type="text" name="plural" class="regular-text" value="<?php echo esc_attr( $editing['plural'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'e.g., Teachers', 'bb-content-types' ); ?>" required>
 						<p class="description"><?php esc_html_e( 'Shown in the admin menu and list screens.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Singular Name', 'bb-content-types' ); ?></th>
-					<td>
-						<input type="text" name="singular" class="regular-text" value="<?php echo esc_attr( $editing['singular'] ?? '' ); ?>" required>
+					</div>
+					<div class="bb-ct-field">
+						<label for="bb-ct-singular"><?php esc_html_e( 'Singular Name', 'bb-content-types' ); ?></label>
+						<input id="bb-ct-singular" type="text" name="singular" class="regular-text" value="<?php echo esc_attr( $editing['singular'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'e.g., Teacher', 'bb-content-types' ); ?>" required>
 						<p class="description"><?php esc_html_e( 'Used for editor labels and buttons.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Slug', 'bb-content-types' ); ?></th>
-					<td>
-						<input type="text" name="slug" class="regular-text" value="<?php echo esc_attr( $editing_slug ); ?>" required>
+					</div>
+					<div class="bb-ct-field">
+						<label for="bb-ct-slug"><?php esc_html_e( 'Slug', 'bb-content-types' ); ?></label>
+						<input id="bb-ct-slug" type="text" name="slug" class="regular-text" value="<?php echo esc_attr( $editing_slug ); ?>" placeholder="<?php esc_attr_e( 'e.g., teacher', 'bb-content-types' ); ?>" required>
 						<p class="description"><?php esc_html_e( 'Lowercase, letters/numbers/hyphens only. Used in URLs and as the internal post type key.', 'bb-content-types' ); ?></p>
 						<?php if ( ! empty( $editing['conflicts'] ) ) : ?>
-							<p class="description" style="color:#b32d2e;"><?php echo esc_html( implode( ' ', $editing['conflicts'] ) ); ?></p>
+							<p class="description bb-ct-warning"><?php echo esc_html( implode( ' ', $editing['conflicts'] ) ); ?></p>
 						<?php endif; ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Description', 'bb-content-types' ); ?></th>
-					<td>
-						<textarea name="description" class="large-text"><?php echo esc_textarea( $editing['description'] ?? '' ); ?></textarea>
-						<p class="description"><?php esc_html_e( 'Optional. Helps teams understand what this content type is for.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Icon', 'bb-content-types' ); ?></th>
-					<td>
-						<select name="icon">
+					</div>
+					<div class="bb-ct-field">
+						<label for="bb-ct-icon"><?php esc_html_e( 'Menu Icon', 'bb-content-types' ); ?></label>
+						<select id="bb-ct-icon" name="icon">
 							<?php
 							$icons = array( 'dashicons-admin-post', 'dashicons-portfolio', 'dashicons-id', 'dashicons-media-document', 'dashicons-category' );
 							foreach ( $icons as $icon ) {
@@ -160,82 +176,95 @@ function bb_ct_render_post_types_page(): void {
 							}
 							?>
 						</select>
-						<p class="description"><?php esc_html_e( 'Dashicon used in the WordPress admin menu.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Supports', 'bb-content-types' ); ?></th>
-					<td>
-						<?php
-						$supports = $editing['supports'] ?? array( 'title', 'editor' );
-						$choices  = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields', 'page-attributes' );
-						foreach ( $choices as $choice ) {
-							printf(
-								'<label style="margin-right:12px;"><input type="checkbox" name="supports[]" value="%1$s" %2$s> %1$s</label>',
-								esc_attr( $choice ),
-								checked( in_array( $choice, $supports, true ), true, false )
-							);
-						}
-						?>
-						<p class="description"><?php esc_html_e( 'Choose which editor features are enabled for this content type.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Visibility', 'bb-content-types' ); ?></th>
-					<td>
+						<p class="description"><?php esc_html_e( 'Icon shown in the WordPress admin menu.', 'bb-content-types' ); ?></p>
+					</div>
+				</div>
+				<div class="bb-ct-field">
+					<label for="bb-ct-description"><?php esc_html_e( 'Description', 'bb-content-types' ); ?></label>
+					<textarea id="bb-ct-description" name="description" class="large-text" placeholder="<?php esc_attr_e( 'Optional description to help teams understand this content type…', 'bb-content-types' ); ?>"><?php echo esc_textarea( $editing['description'] ?? '' ); ?></textarea>
+					<p class="description"><?php esc_html_e( 'Optional. Helps teams understand what this content type is for.', 'bb-content-types' ); ?></p>
+				</div>
+			</div>
+
+			<div class="bb-ct-form-section">
+				<h3><?php esc_html_e( 'Editor Features', 'bb-content-types' ); ?></h3>
+				<?php
+				$supports = $editing['supports'] ?? array( 'title', 'editor' );
+				$choices  = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields', 'page-attributes' );
+				?>
+				<div class="bb-ct-checkbox-grid">
+					<?php foreach ( $choices as $choice ) : ?>
+						<label><input type="checkbox" name="supports[]" value="<?php echo esc_attr( $choice ); ?>" <?php checked( in_array( $choice, $supports, true ), true, false ); ?>> <?php echo esc_html( ucwords( str_replace( '-', ' ', $choice ) ) ); ?></label>
+					<?php endforeach; ?>
+				</div>
+				<p class="description"><?php esc_html_e( 'Choose which editor features are enabled for this content type.', 'bb-content-types' ); ?></p>
+			</div>
+
+			<div class="bb-ct-form-section">
+				<h3><?php esc_html_e( 'Visibility & Access', 'bb-content-types' ); ?></h3>
+				<div class="bb-ct-toggle-grid">
+					<div class="bb-ct-toggle-card">
 						<label><input type="checkbox" name="public" value="1" <?php checked( ! empty( $editing['public'] ) ); ?>> <?php esc_html_e( 'Public', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'If disabled, content is admin-only and not publicly queryable.', 'bb-content-types' ); ?></p>
-						<label><input type="checkbox" name="has_archive" value="1" <?php checked( ! empty( $editing['has_archive'] ) ); ?>> <?php esc_html_e( 'Has archive', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Enable an archive page for this content type.', 'bb-content-types' ); ?></p>
-						<label><input type="checkbox" name="hierarchical" value="1" <?php checked( ! empty( $editing['hierarchical'] ) ); ?>> <?php esc_html_e( 'Hierarchical', 'bb-content-types' ); ?></label><br>
-						<label><input type="checkbox" name="show_in_rest" value="1" <?php checked( ! empty( $editing['show_in_rest'] ) ); ?>> <?php esc_html_e( 'Show in REST', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Required for block editor and headless use cases.', 'bb-content-types' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Content is publicly queryable and accessible.', 'bb-content-types' ); ?></p>
+						<label><input type="checkbox" name="has_archive" value="1" <?php checked( ! empty( $editing['has_archive'] ) ); ?>> <?php esc_html_e( 'Has Archive', 'bb-content-types' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Enable an archive listing page.', 'bb-content-types' ); ?></p>
+						<label><input type="checkbox" name="hierarchical" value="1" <?php checked( ! empty( $editing['hierarchical'] ) ); ?>> <?php esc_html_e( 'Hierarchical', 'bb-content-types' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Allow parent/child relationships.', 'bb-content-types' ); ?></p>
+					</div>
+					<div class="bb-ct-toggle-card">
+						<label><input type="checkbox" name="show_in_rest" value="1" <?php checked( ! empty( $editing['show_in_rest'] ) ); ?>> <?php esc_html_e( 'Show in REST API', 'bb-content-types' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Required for block editor and headless use.', 'bb-content-types' ); ?></p>
 						<label><input type="checkbox" name="show_in_menu" value="1" <?php checked( ! empty( $editing['show_in_menu'] ) ); ?>> <?php esc_html_e( 'Show in Admin Menu', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'If disabled, content is still accessible but not shown in the left menu.', 'bb-content-types' ); ?></p>
-						<label><input type="checkbox" name="exclude_from_search" value="1" <?php checked( ! empty( $editing['exclude_from_search'] ) ); ?>> <?php esc_html_e( 'Exclude from search', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Prevents content from appearing in site search results.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Rewrite Base', 'bb-content-types' ); ?></th>
-					<td>
-						<input type="text" name="rewrite_base" class="regular-text" value="<?php echo esc_attr( $editing['rewrite_base'] ?? '' ); ?>">
-						<p class="description"><?php esc_html_e( 'The base path used for single URLs. Default is the slug.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'With front', 'bb-content-types' ); ?></th>
-					<td>
-						<label><input type="checkbox" name="with_front" value="1" <?php checked( ! empty( $editing['with_front'] ) ); ?>> <?php esc_html_e( 'Use front base', 'bb-content-types' ); ?></label>
-						<p class="description"><?php esc_html_e( 'If enabled, WordPress will prefix URLs with your site’s permalink front base.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Archive slug', 'bb-content-types' ); ?></th>
-					<td>
-						<input type="text" name="archive_slug" class="regular-text" value="<?php echo esc_attr( $editing['archive_slug'] ?? '' ); ?>">
-						<p class="description"><?php esc_html_e( 'Optional. Defaults to the rewrite base.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Parent Page Mapping', 'bb-content-types' ); ?></th>
-					<td>
+						<p class="description"><?php esc_html_e( 'Display in the WordPress admin sidebar.', 'bb-content-types' ); ?></p>
+						<label><input type="checkbox" name="exclude_from_search" value="1" <?php checked( ! empty( $editing['exclude_from_search'] ) ); ?>> <?php esc_html_e( 'Exclude from Search', 'bb-content-types' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Hide from site search results.', 'bb-content-types' ); ?></p>
+					</div>
+				</div>
+			</div>
+
+			<div class="bb-ct-form-section">
+				<h3><?php esc_html_e( 'URL Configuration', 'bb-content-types' ); ?></h3>
+				<div class="bb-ct-form-grid">
+					<div class="bb-ct-field">
+						<label for="bb-ct-rewrite-base"><?php esc_html_e( 'Rewrite Base', 'bb-content-types' ); ?></label>
+						<input id="bb-ct-rewrite-base" type="text" name="rewrite_base" class="regular-text" value="<?php echo esc_attr( $editing['rewrite_base'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'e.g., teachers', 'bb-content-types' ); ?>">
+						<p class="description"><?php esc_html_e( 'The base path for single URLs. Defaults to the slug.', 'bb-content-types' ); ?></p>
+					</div>
+					<div class="bb-ct-field">
+						<label for="bb-ct-archive-slug"><?php esc_html_e( 'Archive Slug', 'bb-content-types' ); ?></label>
+						<input id="bb-ct-archive-slug" type="text" name="archive_slug" class="regular-text" value="<?php echo esc_attr( $editing['archive_slug'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Optional', 'bb-content-types' ); ?>">
+						<p class="description"><?php esc_html_e( 'Custom archive URL. Defaults to rewrite base.', 'bb-content-types' ); ?></p>
+					</div>
+					<div class="bb-ct-field">
+						<label for="bb-ct-parent-page"><?php esc_html_e( 'Parent Page Mapping', 'bb-content-types' ); ?></label>
 						<?php
 						wp_dropdown_pages(
 							array(
-								'name'              => 'parent_page_id',
-								'selected'          => $editing['parent_page_id'] ?? 0,
-								'show_option_none'  => __( '— None —', 'bb-content-types' ),
+								'name'             => 'parent_page_id',
+								'selected'         => absint( $editing['parent_page_id'] ?? 0 ),
+								'show_option_none' => esc_html__( '— None —', 'bb-content-types' ),
+								'id'               => 'bb-ct-parent-page',
 							)
 						);
 						?>
-						<p class="description"><?php esc_html_e( 'Prepends the selected page path to single URLs (example: /company/careers/job-title/).', 'bb-content-types' ); ?></p>
-						<p class="description"><?php esc_html_e( 'Parent mapping affects single URLs only. If you change this later, consider adding redirects.', 'bb-content-types' ); ?></p>
-					</td>
-				</tr>
-			</table>
-			<?php submit_button( $editing ? __( 'Update Post Type', 'bb-content-types' ) : __( 'Add Post Type', 'bb-content-types' ) ); ?>
+						<p class="description"><?php esc_html_e( 'Prepends the selected page path to single URLs only.', 'bb-content-types' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Example: /company/careers/job-title/ where company is the parent page and careers is the post type base.', 'bb-content-types' ); ?></p>
+					</div>
+					<div class="bb-ct-field bb-ct-field-inline">
+						<label><input type="checkbox" name="with_front" value="1" <?php checked( ! empty( $editing['with_front'] ) ); ?>> <?php esc_html_e( 'Use front base in URLs', 'bb-content-types' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Prefix URLs with your site permalink front base.', 'bb-content-types' ); ?></p>
+					</div>
+				</div>
+			</div>
+
+			<div class="bb-ct-form-footer">
+				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=bb-content-types' ) ); ?>"><?php esc_html_e( 'Cancel', 'bb-content-types' ); ?></a>
+				<?php submit_button( $editing ? __( 'Update Post Type', 'bb-content-types' ) : __( 'Add Post Type', 'bb-content-types' ), 'primary', 'submit', false ); ?>
+			</div>
 		</form>
+				</div>
+			</details>
+		</div>
 	</div>
 	<?php
 }
@@ -259,7 +288,10 @@ function bb_ct_handle_save_post_type(): void {
 	}
 
 	$conflicts = bb_ct_check_slug_conflicts( $slug, $config );
-	$rewrite_base = sanitize_key( wp_unslash( $_POST['rewrite_base'] ?? $slug ) );
+	$rewrite_base = sanitize_key( wp_unslash( $_POST['rewrite_base'] ?? '' ) );
+	if ( '' === $rewrite_base ) {
+		$rewrite_base = $slug;
+	}
 	$archive_slug = sanitize_key( wp_unslash( $_POST['archive_slug'] ?? '' ) );
 	if ( $rewrite_base && $rewrite_base !== $slug ) {
 		$conflicts = array_merge( $conflicts, bb_ct_check_slug_conflicts( $rewrite_base, $config ) );
