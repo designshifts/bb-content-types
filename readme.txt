@@ -1,17 +1,17 @@
 === BB Content Types ===
-Contributors: chrisandersondesigns
+Contributors: coffeemugger
 Tags: custom post types, taxonomies, rewrites, admin
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Manage custom post types, taxonomies, and rewrite rules via a clean admin UI.
+Create custom WP post types and taxonomies in minutes, without writing code.
 
 == Description ==
-BB Content Types provides a structured interface for defining custom post types and taxonomies with predictable rewrite behavior. It is designed for teams who want a consistent, repeatable configuration that can be safely handed off between environments.
+BB Content Types helps you create and manage custom post types and taxonomies from a friendly admin screen. Set up labels, slugs, visibility, and editor features without editing code, and keep URLs predictable with clear rewrite controls. It is built for teams that want a reliable, repeatable setup that can be moved between environments.
 
 == Installation ==
 1. Upload the `bb-content-types` folder to the `/wp-content/plugins/` directory.
@@ -19,16 +19,25 @@ BB Content Types provides a structured interface for defining custom post types 
 3. Go to "Content Types" in the admin menu to create post types and taxonomies.
 
 == Frequently Asked Questions ==
+= Who is this plugin for? =
+Anyone who needs custom post types and taxonomies without touching code, including marketers and content teams.
+
+= Will it change my theme or content? =
+No. It only registers post types, taxonomies, and rewrite rules. Your theme controls how content is displayed.
+
 = Do I need to flush rewrites? =
-The plugin will flag rewrite changes and flush automatically for admins on the next load. You can also use the "Flush rewrites" button if needed.
+Rewrite changes are flagged and flushed automatically for admins on the next load. You can also use the "Flush rewrites" button if needed.
 
 = Does parent mapping affect archives? =
-If a parent page is selected, archive URLs are mapped under the parent path as well.
+Yes. If a parent page is selected, archive URLs are mapped under the parent path as well.
+
+= Can I export or import configurations? =
+Yes. The admin includes import and export tools so you can move settings between sites.
 
 == Changelog ==
-= 0.1.0 =
+= 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
-= 0.1.0 =
+= 1.0.0 =
 Initial release.
