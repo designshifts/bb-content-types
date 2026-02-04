@@ -26,6 +26,7 @@ function bb_ct_render_taxonomies_page(): void {
 	$config = bb_ct_get_config();
 	$taxonomies = $config['taxonomies'];
 	$post_types = array_keys( $config['post_types'] );
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$editing_slug = isset( $_GET['edit'] ) ? sanitize_key( wp_unslash( $_GET['edit'] ) ) : '';
 	$editing = $editing_slug && isset( $taxonomies[ $editing_slug ] ) ? $taxonomies[ $editing_slug ] : null;
 	?>

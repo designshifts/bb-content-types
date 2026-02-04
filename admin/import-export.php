@@ -53,8 +53,8 @@ function bb_ct_render_import_export_page(): void {
 			<h3><?php esc_html_e( 'Import preview', 'bb-content-types' ); ?></h3>
 			<p>
 				<?php
-			// translators: 1: post type count, 2: taxonomy count.
 			printf(
+				// translators: 1: post type count, 2: taxonomy count.
 				esc_html__( 'Will create or update %1$d post types and %2$d taxonomies.', 'bb-content-types' ),
 				(int) $preview['counts']['post_types'],
 				(int) $preview['counts']['taxonomies']

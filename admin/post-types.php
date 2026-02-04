@@ -27,6 +27,7 @@ function bb_ct_render_post_types_page(): void {
 	$config = bb_ct_get_config();
 	$post_types = $config['post_types'];
 	$taxonomies = $config['taxonomies'];
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$editing_slug = isset( $_GET['edit'] ) ? sanitize_key( wp_unslash( $_GET['edit'] ) ) : '';
 	$editing = $editing_slug && isset( $post_types[ $editing_slug ] ) ? $post_types[ $editing_slug ] : null;
 	?>
@@ -50,8 +51,8 @@ function bb_ct_render_post_types_page(): void {
 				<div>
 					<h2><?php esc_html_e( 'Registered Post Types', 'bb-content-types' ); ?></h2>
 					<?php
-					// translators: %d is the number of registered post types.
 					$registered_count = sprintf(
+						// translators: %d is the number of registered post types.
 						_n( '%d post type registered', '%d post types registered', count( $post_types ), 'bb-content-types' ),
 						count( $post_types )
 					);

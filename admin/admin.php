@@ -196,7 +196,9 @@ function bb_ct_admin_notices(): void {
 		return;
 	}
 
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['bb_ct_message'] ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$message = sanitize_text_field( wp_unslash( $_GET['bb_ct_message'] ) );
 		printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
 	}

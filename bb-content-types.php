@@ -3,7 +3,7 @@
  * Plugin Name: BB Content Types
  * Plugin URI: https://betterbuilds.app
  * Description: Manage custom post types, taxonomies, and rewrite rules via admin UI.
- * Version: 0.1.0
+ * Version: 1.0.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Chris Anderson
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BB_CT_VERSION', '0.1.0' );
+define( 'BB_CT_VERSION', '1.0.0' );
 define( 'BB_CT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BB_CT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'BB_CT_CONFIG_OPTION', 'bb_content_types_config' );
@@ -37,18 +37,8 @@ require_once BB_CT_PLUGIN_DIR . 'admin/post-types.php';
 require_once BB_CT_PLUGIN_DIR . 'admin/taxonomies.php';
 require_once BB_CT_PLUGIN_DIR . 'admin/import-export.php';
 
-add_action( 'init', 'bb_ct_load_textdomain' );
 register_activation_hook( __FILE__, 'bb_ct_activate' );
 register_deactivation_hook( __FILE__, 'bb_ct_deactivate' );
-
-/**
- * Load plugin textdomain.
- *
- * @return void
- */
-function bb_ct_load_textdomain(): void {
-	load_plugin_textdomain( 'bb-content-types', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
 
 /**
  * Activation hook.
