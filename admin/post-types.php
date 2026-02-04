@@ -58,7 +58,7 @@ function bb_ct_render_post_types_page(): void {
 					?>
 					<p class="bb-ct-card-sub"><?php echo esc_html( $registered_count ); ?></p>
 				</div>
-				<a class="button button-primary" href="#bb-ct-post-type-form"><?php esc_html_e( 'Add New', 'bb-content-types' ); ?></a>
+				<a class="button button-primary" id="bb-ct-add-new-post-type" href="#bb-ct-post-type-form"><?php esc_html_e( 'Add New', 'bb-content-types' ); ?></a>
 			</div>
 			<table class="widefat striped bb-ct-table">
 			<thead>

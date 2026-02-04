@@ -85,6 +85,13 @@ function bb_ct_enqueue_admin_styles( string $hook ): void {
 	wp_register_style( 'bb-content-types-admin', false, array(), BB_CT_VERSION );
 	wp_enqueue_style( 'bb-content-types-admin' );
 	wp_add_inline_style( 'bb-content-types-admin', $css );
+
+	wp_register_script( 'bb-content-types-admin', '', array(), BB_CT_VERSION, true );
+	wp_enqueue_script( 'bb-content-types-admin' );
+	wp_add_inline_script(
+		'bb-content-types-admin',
+		'document.addEventListener("DOMContentLoaded",function(){var trigger=document.getElementById("bb-ct-add-new-post-type");if(!trigger){return;}var details=document.querySelector("#bb-ct-post-type-form .bb-ct-accordion");trigger.addEventListener("click",function(event){if(!details){return;}event.preventDefault();details.open=true;details.scrollIntoView({behavior:"smooth",block:"start"});});});'
+	);
 }
 
 /**
