@@ -116,14 +116,12 @@ function bb_ct_handle_import_preview(): void {
 	$json = isset( $_POST['import_json'] ) ? sanitize_textarea_field( wp_unslash( $_POST['import_json'] ) ) : '';
 	$preview = bb_ct_build_import_preview( $json );
 	if ( ! $preview ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-import-export&bb_ct_message=Invalid%20JSON' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types-import-export', __( 'Invalid JSON', 'bb-content-types' ) );
 	}
 
 	bb_ct_set_import_preview( $preview );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-import-export&bb_ct_message=Preview%20ready' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types-import-export', __( 'Preview ready', 'bb-content-types' ) );
 }
 
 /**
@@ -139,8 +137,7 @@ function bb_ct_handle_import_apply(): void {
 
 	$preview = bb_ct_get_import_preview();
 	if ( ! $preview ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-import-export&bb_ct_message=No%20preview%20found' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types-import-export', __( 'No preview found', 'bb-content-types' ) );
 	}
 
 	$config = bb_ct_get_config();
@@ -149,8 +146,7 @@ function bb_ct_handle_import_apply(): void {
 	bb_ct_save_config( $config );
 	bb_ct_clear_import_preview();
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-import-export&bb_ct_message=Imported' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types-import-export', __( 'Imported', 'bb-content-types' ) );
 }
 
 /**

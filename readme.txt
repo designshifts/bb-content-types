@@ -4,7 +4,7 @@ Tags: custom post types, taxonomies, rewrites, admin
 Requires at least: 6.0
 Tested up to: 6.9.1
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,9 +35,15 @@ Yes. If a parent page is selected, archive URLs are mapped under the parent path
 Yes. The admin includes import and export tools so you can move settings between sites.
 
 == Changelog ==
+= 1.0.1 =
+* Security: Add nonce verification when displaying redirect messages (`bb_ct_message`) in admin notices. Ensures `$_GET['bb_ct_message']` is only shown after a valid nonce check and capability check (WP.org review fix).
+
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
+= 1.0.1 =
+Security update: nonce and permission checks for admin redirect messages. Recommended upgrade.
+
 = 1.0.0 =
 Initial release.

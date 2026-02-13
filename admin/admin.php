@@ -9,11 +9,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** Nonce action for redirect URL messages (must be verified before displaying $_GET['bb_ct_message']). */
+define( 'BB_CT_MESSAGE_NONCE_ACTION', 'bb_ct_admin_message' );
+
 add_action( 'admin_menu', 'bb_ct_register_admin_menu' );
 add_action( 'admin_notices', 'bb_ct_admin_notices' );
 add_action( 'admin_post_bb_ct_flush_rewrites', 'bb_ct_handle_flush_rewrites' );
 add_action( 'bb_core_register', 'bb_ct_register_core_panel' );
 add_action( 'admin_enqueue_scripts', 'bb_ct_enqueue_admin_styles' );
+
+/**
+ * Redirect to an admin page with a success/feedback message (nonced).
+ * Call this instead of wp_safe_redirect( ... &bb_ct_message=... ) so the message can be shown securely.
+ *
+ * @param string $page    Admin page slug (e.g. 'bb-content-types').
+ * @param string $message Message to display in the admin notice.
+ * @return void
+ */
+function bb_ct_redirect_with_message( string $page, string $message ): void {
+	$url = add_query_arg(
+		array(
+			'page'          => $page,
+			'bb_ct_message' => $message,
+		),
+		admin_url( 'admin.php' )
+	);
+	wp_safe_redirect( wp_nonce_url( $url, BB_CT_MESSAGE_NONCE_ACTION ) );
+	exit;
+}
 
 /**
  * Enqueue admin styles for page header.
@@ -196,11 +219,13 @@ function bb_ct_admin_notices(): void {
 		return;
 	}
 
-	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( isset( $_GET['bb_ct_message'] ) ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$message = sanitize_text_field( wp_unslash( $_GET['bb_ct_message'] ) );
-		printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
+	// Only display redirect message when nonce is present and valid (do not trust input alone).
+	if ( isset( $_GET['bb_ct_message'], $_GET['_wpnonce'] ) ) {
+		$nonce = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
+		if ( wp_verify_nonce( $nonce, BB_CT_MESSAGE_NONCE_ACTION ) ) {
+			$message = sanitize_text_field( wp_unslash( $_GET['bb_ct_message'] ) );
+			printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
+		}
 	}
 
 	if ( get_option( BB_CT_NEEDS_FLUSH_OPTION ) ) {
@@ -220,6 +245,5 @@ function bb_ct_handle_flush_rewrites(): void {
 	check_admin_referer( 'bb_ct_flush_rewrites' );
 	flush_rewrite_rules();
 	bb_ct_clear_needs_flush();
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Rewrite%20rules%20updated' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types', __( 'Rewrite rules updated', 'bb-content-types' ) );
 }

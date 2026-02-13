@@ -284,8 +284,7 @@ function bb_ct_handle_save_post_type(): void {
 	$config = bb_ct_get_config();
 	$slug   = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( $_POST['slug'] ) ) : '';
 	if ( ! bb_ct_is_valid_slug( $slug ) ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Invalid%20slug' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types', __( 'Invalid slug', 'bb-content-types' ) );
 	}
 
 	$conflicts = bb_ct_check_slug_conflicts( $slug, $config );
@@ -339,8 +338,7 @@ function bb_ct_handle_save_post_type(): void {
 	$config['post_types'][ $slug ] = $data;
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Saved' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types', __( 'Saved', 'bb-content-types' ) );
 }
 
 /**
@@ -359,8 +357,7 @@ function bb_ct_handle_delete_post_type(): void {
 	unset( $config['post_types'][ $slug ] );
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Deleted' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types', __( 'Deleted', 'bb-content-types' ) );
 }
 
 /**
@@ -377,8 +374,7 @@ function bb_ct_handle_duplicate_post_type(): void {
 	$slug = isset( $_GET['slug'] ) ? sanitize_key( wp_unslash( $_GET['slug'] ) ) : '';
 	$config = bb_ct_get_config();
 	if ( ! isset( $config['post_types'][ $slug ] ) ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Not%20found' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types', __( 'Not found', 'bb-content-types' ) );
 	}
 
 	$new_slug = $slug . '-copy';
@@ -388,8 +384,7 @@ function bb_ct_handle_duplicate_post_type(): void {
 	$config['post_types'][ $new_slug ]['enabled'] = false;
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Duplicated' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types', __( 'Duplicated', 'bb-content-types' ) );
 }
 
 /**
@@ -410,6 +405,5 @@ function bb_ct_handle_toggle_post_type(): void {
 		bb_ct_save_config( $config );
 	}
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types&bb_ct_message=Updated' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types', __( 'Updated', 'bb-content-types' ) );
 }

@@ -145,8 +145,7 @@ function bb_ct_handle_duplicate_taxonomy(): void {
 	$slug = isset( $_GET['slug'] ) ? sanitize_key( wp_unslash( $_GET['slug'] ) ) : '';
 	$config = bb_ct_get_config();
 	if ( ! isset( $config['taxonomies'][ $slug ] ) ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-taxonomies&bb_ct_message=Not%20found' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types-taxonomies', __( 'Not found', 'bb-content-types' ) );
 	}
 
 	$new_slug = $slug . '-copy';
@@ -155,8 +154,7 @@ function bb_ct_handle_duplicate_taxonomy(): void {
 	$config['taxonomies'][ $new_slug ]['singular'] = $config['taxonomies'][ $slug ]['singular'] . ' Copy';
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-taxonomies&bb_ct_message=Duplicated' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types-taxonomies', __( 'Duplicated', 'bb-content-types' ) );
 }
 
 /**
@@ -173,8 +171,7 @@ function bb_ct_handle_save_taxonomy(): void {
 	$config = bb_ct_get_config();
 	$slug   = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( $_POST['slug'] ) ) : '';
 	if ( ! bb_ct_is_valid_slug( $slug ) ) {
-		wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-taxonomies&bb_ct_message=Invalid%20slug' ) );
-		exit;
+		bb_ct_redirect_with_message( 'bb-content-types-taxonomies', __( 'Invalid slug', 'bb-content-types' ) );
 	}
 
 	$conflicts = bb_ct_check_slug_conflicts( $slug, $config );
@@ -197,8 +194,7 @@ function bb_ct_handle_save_taxonomy(): void {
 	$config['taxonomies'][ $slug ] = $data;
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-taxonomies&bb_ct_message=Saved' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types-taxonomies', __( 'Saved', 'bb-content-types' ) );
 }
 
 /**
@@ -217,6 +213,5 @@ function bb_ct_handle_delete_taxonomy(): void {
 	unset( $config['taxonomies'][ $slug ] );
 	bb_ct_save_config( $config );
 
-	wp_safe_redirect( admin_url( 'admin.php?page=bb-content-types-taxonomies&bb_ct_message=Deleted' ) );
-	exit;
+	bb_ct_redirect_with_message( 'bb-content-types-taxonomies', __( 'Deleted', 'bb-content-types' ) );
 }
