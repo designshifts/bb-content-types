@@ -1,0 +1,27 @@
+# Copyright (C) 2026 BB Content Types
+# This file is distributed under the same license as the BB Content Types plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: BB Content Types 1.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: bb-content-types\n"
+
+#: admin/admin.php
+msgid "Content Types"
+msgstr ""
+
+#: admin/admin.php
+msgid "Rewrite rules updated"
+msgstr ""
+
+#: admin/admin.php
+msgid "URL settings changed. Rewrite rules will be refreshed automatically. If you notice 404s, use the flush button below."
+msgstr ""
