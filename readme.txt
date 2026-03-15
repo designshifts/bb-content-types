@@ -4,7 +4,7 @@ Tags: custom post types, taxonomies, rewrites, admin
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ Yes. The admin includes import and export tools so you can move settings between
 
 = 1.0.3 =
 * Corrected the icon svg
+
+= 1.0.4 =
+* Align with Tag version
 
 = 1.0.0 =
 * Initial release.
