@@ -4,7 +4,7 @@ Tags: custom post types, taxonomies, rewrites, admin
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,9 +34,18 @@ Yes. If a parent page is selected, archive URLs are mapped under the parent path
 = Can I export or import configurations? =
 Yes. The admin includes import and export tools so you can move settings between sites.
 
+== Screenshots ==
+1. Plugin activated with the Content Types admin menu available under the WordPress sidebar.
+2. Post Types list screen showing registered content types, status, archive/REST visibility, and quick actions.
+3. Edit Post Type screen with label, slug, icon, description, and editor feature configuration.
+4. Advanced post type settings for visibility/access, REST behavior, and URL/rewrite configuration.
+
 == Changelog ==
 = 1.0.1 =
 * Security: Add nonce verification when displaying redirect messages (`bb_ct_message`) in admin notices. Ensures `$_GET['bb_ct_message']` is only shown after a valid nonce check and capability check (WP.org review fix).
+
+= 1.0.1 =
+* Added Screenshots
 
 = 1.0.0 =
 * Initial release.
